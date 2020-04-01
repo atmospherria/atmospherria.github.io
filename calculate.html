@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Метрика</title>
+	</head>
+	<body>
+	<div style="width: 100%; height: 100%; text-align: center;">
+		<h1>П'янкова В.В. студентка групи ПІ-418</h1>
+		<h2> Калькулятор метрики  "Чиста поточна вартість"</h2>
+		 
+		<table id="table" border="1" style="border-collapse: collapse; margin: auto; width: 100%; height: 262px;"">
+			<tbody>
+			<tr>
+				<td style="text-align: center;">Період (роки)</td>
+				<td style="text-align: center;">Грошовий потік (грн.)</td>
+				<td style="text-align: center;">Дисконт</td>
+			</tr>
+			<tr>
+				<td style="text-align: center;">0</td>
+				<td class="Cf0" style="text-align: center;">
+					<span id="Cf0-span" style="visibility: hidden;"></span>
+					<input id="Cf0" type="number" style="width: 99%; height: 100%;"/>
+				</td>
+				<td class="D0" style="text-align: center;">
+					<span id="D0-span" style="visibility: hidden;"></span>
+					<input id="D0" type="number" style="width: 99%; height: 100%;"/>
+				</td>
+			</tr>
+			<tr>
+				<td style="text-align: center;">1</td>
+				<td class="Cf1" style="text-align: center;">
+					<span id="Cf1-span" style="visibility: hidden;"></span>
+					<input id="Cf1" type="number" style="width: 99%; height: 100%;"/>
+				</td>
+				<td class="D1" style="text-align: center;">
+					<span id="D1-span" style="visibility: hidden;"></span>
+					<input id="D1" type="number" style="width: 99%; height: 100%;"/>
+				</td>
+			</tr>
+			<tr>
+				<td style="text-align: center;">2</td>
+				<td class="Cf2" style="text-align: center;">
+					<span id="Cf2-span" style="visibility: hidden;"></span>
+					<input id="Cf2" type="number" style="width: 99%; height: 100%;"/>
+				</td>
+				<td class="D2" style="text-align: center;">
+					<span id="D2-span" style="visibility: hidden;"></span>
+					<input id="D2" type="number" style="width: 99%; height: 100%;"/>
+				</td>
+			</tr>
+			<tr>
+				<td style="text-align: center;">3</td>
+				<td class="Cf3" style="text-align: center;">
+					<span id="Cf3-span" style="visibility: hidden;"></span>
+					<input id="Cf3" type="number" style="width: 99%; height: 100%;"/>
+				</td>
+				<td class="D3" style="text-align: center;">
+					<span id="D3-span" style="visibility: hidden;"></span>
+					<input id="D3" type="number" style="width: 99%; height: 100%;"/>
+				</td>
+			</tr>
+			<tr>
+			<td style="text-align: center;">Чиста поточна вартість</td>
+			<td style="text-align: center;" rowspan=1>
+					<span id="res"></span></td>
+			</tr>
+		</tbody>
+		</table>
+		
+		<div style="padding-top: 10px;">
+			<input type="button" value="Розрахувати" onclick="calculate()" style="text-align: center;"/>
+			<input type="button" onclick="tableToExcel('table', 'W3C Example Table')" value="Export to Excel" style="text-align: center;"/>
+			<input type="button" onclick="exportToCSV()" value="Export to CSV" style="text-align: center;"/>
+		</div>
+	</div>
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+	<script>
+	function download_csv(csv, filename) {
+    var csvFile;
+    var downloadLink;
+
+    // CSV FILE
+    csvFile = new Blob([csv], {type: "text/csv"});
+
+    // Download link
+    downloadLink = document.createElement("a");
+
+    // File name
+    downloadLink.download = filename;
+
+    // We have to create a link to the file
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+
+    // Make sure that the link is not displayed
+    downloadLink.style.display = "none";
+
+    // Add the link to your DOM
+    document.body.appendChild(downloadLink);
+
+    // Lanzamos
+    downloadLink.click();
+}
+
+function export_table_to_csv(html, filename) {
+	var csv = [];
+	var rows = document.querySelectorAll("table tr");
+	
+    for (var i = 0; i < rows.length; i++) {
+		var row = [], cols = rows[i].querySelectorAll("td, th");
+		
+        for (var j = 0; j < cols.length; j++) 
+            row.push(cols[j].textContent.trim());
+        
+		csv.push(row.join(","));		
+	}
+
+    download_csv(csv.join("\n"), filename);
+}
+
+	function exportToCSV() {
+		calculate();
+		var html = document.querySelector("table").outerHTML;
+		export_table_to_csv(html, "table.csv");
+	}
+
+	var tableToExcel = (function() {	
+		var uri = 'data:application/vnd.ms-excel;base64,'
+		, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>'
+		, base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+		, format = function(s, c) { 	    	 
+			return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) 
+		}
+		, downloadURI = function(uri, name) {
+		    var link = document.createElement("a");
+		    link.download = name;
+		    link.href = uri;
+		    link.click();
+		}
+
+		return function(table, name, fileName) {
+		
+		calculate();
+				
+			if (!table.nodeType) table = document.getElementById(table)
+				var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+			var resuri = uri + base64(format(template, ctx))
+			downloadURI(resuri, fileName);
+		}
+	})();
+	
+	 function calculate()
+  {
+    var income0 = document.getElementById('Cf0').value;
+    var income1 = document.getElementById('Cf1').value;
+    var income2 = document.getElementById('Cf2').value;
+    var income3 = document.getElementById('Cf3').value;
+    var income00 = document.getElementById('D0').value;
+    var income11 = document.getElementById('D1').value;
+    var income22 = document.getElementById('D2').value;
+    var income33 = document.getElementById('D3').value;
+    document.getElementById("Cf0-span").textContent = income0;
+    document.getElementById("Cf1-span").textContent = income1;
+    document.getElementById("Cf2-span").textContent = income2;
+    document.getElementById("Cf3-span").textContent = income3;
+    document.getElementById("D0-span").textContent = income00;
+    document.getElementById("D1-span").textContent = income11;
+    document.getElementById("D2-span").textContent = income22;
+    document.getElementById("D3-span").textContent = income33;
+    
+    var CFs= [parseInt(income0), parseInt(income1), parseInt(income2), parseInt(income3)];
+    var d = [parseInt(income00), parseInt(income11), parseInt(income22), parseInt(income33)]
+    var inc = [];
+    
+    var res = 0;
+    
+    for (var i = 0; i < CFs.length - 1; i++) {
+	for(var j = 0; i < d.length - 1; i++){
+        res = (CFs[i]/(1+Math.pow([i],i+1))-CFs[0])+res;
+	res = "" + res;
+        document.getElementById("res").textContent = res.replace(".", ",");
+        break;
+    	}
+     }
+  }
+	</script>
+</html>
