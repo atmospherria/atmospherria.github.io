@@ -8,6 +8,7 @@
 	<div style="width: 100%; height: 100%; text-align: center;">
 		<h1>П'янкова В.В. студентка групи ПІ-418</h1>
 		<h2> Калькулятор метрики  "Чиста поточна вартість"</h2>
+		<p1> gggg</p>
 		 
 		<table id="table" border="1" style="border-collapse: collapse; margin: auto; width: 100%; height: 262px;"">
 			<tbody>
@@ -17,7 +18,7 @@
 				<td style="text-align: center;">Дисконт</td>
 			</tr>
 			<tr>
-				<td style="text-align: center;">0</td>
+				<td style="text-align: center;">Загальні витрати на проект</td>
 				<td class="Cf0" style="text-align: center;">
 					<span id="Cf0-span" style="visibility: hidden;"></span>
 					<input id="Cf0" type="number" style="width: 99%; height: 100%;"/>
@@ -171,19 +172,21 @@ function export_table_to_csv(html, filename) {
     document.getElementById("D3-span").textContent = income33;
     
     var CFs= [parseInt(income0), parseInt(income1), parseInt(income2), parseInt(income3)];
-    var d = [parseInt(income00), parseInt(income11), parseInt(income22), parseInt(income33)]
-    var inc = [];
+    var d = [parseInt(income00), parseInt(income11), parseInt(income22), parseInt(income33)];
+	if(CFs[0] == undefined && d[0] == undefined){
+		return alert("Поля не заповнені");
+	}
     
     var res = 0;
     
     for (var i = 0; i < CFs.length - 1; i++) {
-	for(var j = 0; i < d.length - 1; i++){
-        res = (CFs[i]/(1+Math.pow([i],i+1))-CFs[0])+res;
-	res = "" + res;
-        document.getElementById("res").textContent = res.replace(".", ",");
-        break;
+	for(var j = 0; i < d.length - 1; j++){
+	var dis = d[i+1]/100;
+        res = (CFs[i+1]/(1+Math.pow(dis,i+1))-CFs[0])+res;
+	break;
     	}
      }
+	document.getElementById("res").textContent = res.toFixed(2);
   }
 	</script>
 </html>
